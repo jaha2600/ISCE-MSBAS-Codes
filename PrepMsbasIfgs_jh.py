@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+## written by JJohnson, edited by JHansen ##
 import os
 import glob
 import re
