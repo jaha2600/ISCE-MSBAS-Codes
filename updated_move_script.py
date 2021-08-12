@@ -94,7 +94,7 @@ for i in dates:
         
         print('Creating and copying original filelist')
         #save the files in the original directory for a list
-        dir_files = [f for f in os.listdir(i) if os.path.isfile(os.path.join(i,f))]
+        dir_files = os.listdir(i)
         ls_filename = os.path.join(i,'{}_orig_files'.format(dir_only))
         with open (ls_filename, 'wt') as output:
             for item in dir_files:
