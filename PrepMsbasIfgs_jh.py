@@ -32,7 +32,7 @@ dir_in = currentdir
 
 
 #confirm folder exists to save to. 
-trackdir = os.path.join(dir_in + "asc")
+trackdir = os.path.join(dir_in, "asc")
 if not os.path.isdir(trackdir):
 	os.makedirs(trackdir)
 	print("created folder ", trackdir)
@@ -80,7 +80,8 @@ for i in range(size):
         full = dates[i]
         first = full[0:8]
         second = full[9:17]
-        logfile = open(dir_in + dates[i]+'/isce.log')
+        logfile_path = os.path.join(dir_in, dates[i], 'isce.log')
+        logfile = open(logfile_path)
        
         data = logfile.read()
        
@@ -124,14 +125,14 @@ np.savetxt(savepath, saveList, fmt="%s", delimiter=' ', newline='\n')
 ################################## JH ADD AUG 11 2021 - code to create a header file and clip/extract values from LOS file #####################################
 
 # clip an los file from an example subdirectory to extract azumith and incidence angle
-los_file_in = dir_in + dates[0] + '/los.rdr.geo.vrt'
+los_file_in = os.path.join(dir_in,dates[0],'los.rdr.geo.vrt')
 los_file_out = os.path.join(dir_in,trackdir,dates[0] + '.los.rdr.geo.tif.clip')
 clip_los_command = 'gdal_translate -projwin -55.54984305896815 68.0001446011998 -48.14986218680518 65.16982519688996 -of GTiff '+str(los_file_in)+' '+str(los_file_out)
 
 os.system(clip_los_command)
 
 # read gdal info in python instead of commandline 
-los_info = gdal.Info(los_file_out, format='json')
+los_info = gdal.Info(los_file_out, format='json', stats='True')
 los_band_info = los_info['bands']
 # extract mean of band 1
 los_band_1_mean = los_band_info[0]['mean']
@@ -147,7 +148,9 @@ second_e = examp_file[9:17]
 
 #line changed post sending to joel...
 # i have a file that lists the original files from the ISCE run that i use to read the safefile headers
-orig_filelist = open(dir_in + dates[0] + '/' + first_e + '_' + second_e + '_orig_filelist')
+orig_filelist_name = first_e + '_' + second_e + '_orig_filelist'
+orig_filelist_path = os.path.join(dir_in,dates[0],orig_filelist_name)
+orig_filelist = open(orig_filelist_path)
 orig_filelist_data = orig_filelist.read()
 
 safe_files = []
