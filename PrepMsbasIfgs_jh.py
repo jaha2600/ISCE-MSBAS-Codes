@@ -1,25 +1,38 @@
 #!/usr/bin/env python3
-## written by JJohnson, edited by JHansen ##
+
 import os
 import glob
 import re
 import numpy as np
 from datetime import datetime
 
+
 ##################### JH ADD THIS MODULE AUG 11 2021 ###############################
 from osgeo import gdal
-
+import argparse
 ################################################################################################
 # Step 0: run ISCE up to 'computeBaselines' step. Container does this.
 # Step 1: Edit dir_in below to point to directory of interferogram directories. Run this script.
 ################################################################################################
 
+def getparser():
+    # Parser to submit inputs for scripts. See Jul 27 Email from Jasmine
+    parser = argparse.ArgumentParser(description="Create inputs for MSBAS")
+    parser.add_argument('current_dir', type=str, help='dir with 20* directories in (can just used $PWD if in correct place')
+    #parser.add_argument('rm_flag', type=int, help='Flag to assign removal of large unecessary files, has to be 0 or 1. 0 files are kept, 1 files are deleted')
+    return parser
 
-dir_in = '/data/GREENLAND/ISCE/MSBAS/test/' 
+# i think sticking with full paths on summit is safer as i have had issues with relative pathing and chdir
+parser = getparser()
+args = parser.parse_args()
+currentdir= args.current_dir
+#os.chdir(currentdir)
+
+dir_in = currentdir
 
 
 #confirm folder exists to save to. 
-trackdir = (dir_in + "asc")
+trackdir = os.path.join(dir_in + "asc")
 if not os.path.isdir(trackdir):
 	os.makedirs(trackdir)
 	print("created folder ", trackdir)
