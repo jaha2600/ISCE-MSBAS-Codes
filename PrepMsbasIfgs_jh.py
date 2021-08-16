@@ -58,22 +58,23 @@ if extentfile.endswith(".shp"):
     inDriver = ogr.GetDriverByName("ESRI Shapefile")
     inDataSource = inDriver.Open(extentfile, 0)
     inLayer = inDataSource.GetLayer()
-    extent = inLayer.GetExtent()
+    extents = inLayer.GetExtent()
+    extent = str(extents[0]) + ', ' + str(extents[3]) + ', ' + str(extents[1]) + ', ' + str(extents[2]) 
 elif extentfile.endswith(".tif"):
     #read in the extent of one of geotiffs ?
     extentinfo = gdal.Info(extentfile, format='json', stats='True')
     extent_coords = extentinfo['wgs84Extent']['coordinates'][0]
     extent_1 = extentinfo['wgs84Extent']['coordinates'][0][1][0]
-    extent_2 = extentinfo['wgs84Extent']['coordinates'][0][1][1]
+    extent_2 = extentinfo['wgs84Extent']['coordinates'][0][3][1]
     extent_3 = extentinfo['wgs84Extent']['coordinates'][0][3][0]
-    extent_4 = extentinfo['wgs84Extent']['coordinates'][0][3][1]
+    extent_4 = extentinfo['wgs84Extent']['coordinates'][0][1][1]
     extent = str(extent_1) + ', ' + str(extent_2) + ', ' + str(extent_3) + ', ' + str(extent_4)
 
 else:
     print('File to get extents should be a geotif (i.e. *COR.tif) or a shapefile.')
 
-for d,i in enumerate(size):
-    print(' ## Working on {}/{} ##'.format(d,size))
+for i in range(size):
+    print(' ## Working on {}/{} ##'.format((i+1),size))
     phaseFileIn = os.path.join(dir_in,dates[i], 'filt_topophase.unw_m.geo')
     
     convertdir = os.path.join(dir_in,dates[i])
