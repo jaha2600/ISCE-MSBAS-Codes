@@ -21,14 +21,21 @@ def getparser():
     # Parser to submit inputs for scripts. See Jul 27 Email from Jasmine
     parser = argparse.ArgumentParser(description="Move ISCE outputs for MSBAS")
     parser.add_argument('current_dir', type=str, help='home directory holding date pair folders. i.e./net/tiampostorage2/volume2/JoelShare2/KristyProcessing/Colorado/Calwood/10m')
-    parser.add_argument('rm_flag', type=int, help='Flag to assign removal of large unecessary files, has to be 0 or 1. 0 files are kept, 1 files are deleted')
+    # if --rm_flag is added then save rm_flag as 'True' otherwise save as false
+    parser.add_argument('--rm_flag', type=int, action='store_true',help='Flag to assign removal of large unecessary files, has to be 0 or 1. 0 files are kept, 1 files are deleted')
     return parser
 
 # i think sticking with full paths on summit is safer as i have had issues with relative pathing and chdir
 parser = getparser()
 args = parser.parse_args()
 currentdir= args.current_dir
-remove_flag = args.rm_flag
+
+# if rm_flag exists then assign the removal flag to 1 
+if args.rm_flag:
+    print('Remove Flag Applied - will remove large files')
+    remove_flag == 1
+else:
+    remove_flag = 0
 #os.chdir(currentdir)
 
 #check that the inputted directory exits 
@@ -37,19 +44,20 @@ if os.path.isdir(currentdir) == True:
 else:
     sys.exit('Input Directory Does Not Exist')
 
-# check the remove flag is correct value
-if remove_flag == 0:
-        print('No File Removal')
-elif remove_flag == 1:
-        print('Large unecessary files will be removed')
-else:
-        #print('rm_flag must be either 0 or 1')
-        sys.exit('Error - rm_flag must be either 0 or 1')
+# # check the remove flag is correct value
+# if remove_flag == 0:
+#         print('No File Removal')
+# elif remove_flag == 1:
+#         print('Large unecessary files will be removed')
+# else:
+#         #print('rm_flag must be either 0 or 1')
+#         sys.exit('Error - rm_flag must be either 0 or 1')
 
 
 
 # list the directories with the pathnames
 dates = glob.glob(os.path.join(currentdir,'20*'))
+dates.sort()
 
 # get just the directory names
 dir_names = []
@@ -75,11 +83,13 @@ print('Getting one los file')
     # do the same for the los.rdr.geo files
 los_file_path = os.path.join(dates[0],'merged/')
 los_files = glob.glob(os.path.join(los_file_path,'los.rdr.geo*'))
-    
+
+# somehow get it to extract a los file from the next directory if first one doesnt have los file
 if len(los_files) != 0:
     for l in los_files:
-        shutil.copy2(l, msbas_directory)
-else: print('los.rdr.geo file does not exist')
+        shutil.copy2(l, savepath)
+else: 
+    sys.exit('LOS File Does not exist in first directory looked in?')
 
 ## ##     ## ## 
  
@@ -124,7 +134,7 @@ for i in dates:
         shutil.copy2(ls_filename,msbas_directory)
                 
         
-        #move listfile to msbas directory CHECK THIS BIT
+        #move listfile to msbas directory
         lsinpath = os.path.join(i,'{}_orig_files'.format(dir_only))
         lsoutpath = msbas_directory
         shutil.copy2(lsinpath,lsoutpath)
@@ -142,7 +152,7 @@ for i in dates:
         
             for f in filt_topo_files:
                 #copy the file from location to msbas_directory
-                shutil.copy2(f,msbas_directory)
+                shutil.copy2(f,msbas_merge_dir)
         else: print('filt_topophase.unw.geo files do not exist')
           
         # print('Working on los files')
@@ -158,7 +168,7 @@ for i in dates:
         ## check with joel? ## 
         print('Working on copying geotif files')
         #copy the geotiffs produced also 
-        tif_files = glob.glob(os.path.join(i,'S1*.tif'))
+        tif_files = glob.glob(os.path.join(i,'S1*COR.tif'))
         if len(tif_files) != 0:
             for t in tif_files:
                 shutil.copy2(t,msbas_directory)
