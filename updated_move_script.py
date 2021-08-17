@@ -70,6 +70,19 @@ else:
 	os.mkdir(savepath) 
 	print("making Transfer folder")
     
+## ## JH CHAGED AUG 17 ## ##
+print('Getting one los file')
+    # do the same for the los.rdr.geo files
+los_file_path = os.path.join(dates[0],'merged/')
+los_files = glob.glob(os.path.join(los_file_path,'los.rdr.geo*'))
+    
+if len(los_files) != 0:
+    for l in los_files:
+        shutil.copy2(l, msbas_directory)
+else: print('los.rdr.geo file does not exist')
+
+## ##     ## ## 
+ 
 for i in dates:
    
     #check that isce ran in the directory
@@ -91,7 +104,15 @@ for i in dates:
         else: 
             os.mkdir(msbas_directory)
             print('Making MSBAS dir')
-        
+            
+        ## ## JH CHANGED TODAY AUG 17 ## ##
+        msbas_merge_dir = os.path.join(msbas_directory,'merged')
+        if os.path.isdir(msbas_merge_dir):
+            print('MSBAS/merged dir already exists')
+        else:
+            os.mksir(msbas_merge_dir)
+        ## ##      ## ## 
+            
         print('Creating and copying original filelist')
         #save the files in the original directory for a list
         dir_files = os.listdir(i)
@@ -102,9 +123,6 @@ for i in dates:
         # move filelist to msbas directory 
         shutil.copy2(ls_filename,msbas_directory)
                 
-        
-        #ls_command = 'ls {}/* > {}_orig_files'.format(i,os.path.join(i,dir_only)) 
-        #os.system(ls_command)
         
         #move listfile to msbas directory CHECK THIS BIT
         lsinpath = os.path.join(i,'{}_orig_files'.format(dir_only))
@@ -127,15 +145,17 @@ for i in dates:
                 shutil.copy2(f,msbas_directory)
         else: print('filt_topophase.unw.geo files do not exist')
           
-        print('Working on los files')
+        # print('Working on los files')
         # do the same for the los.rdr.geo files
-        los_files = glob.glob(os.path.join(merge_dir_path,'los.rdr.geo*'))
+        # los_files = glob.glob(os.path.join(merge_dir_path,'los.rdr.geo*'))
         
-        if len(los_files) != 0:
-            for l in los_files:
-                shutil.copy2(l, msbas_directory)
-        else: print('los.rdr.geo files do not exist')
+        # if len(los_files) != 0:
+        #     for l in los_files:
+        #         shutil.copy2(l, msbas_directory)
+        # else: print('los.rdr.geo files do not exist')
         
+        
+        ## check with joel? ## 
         print('Working on copying geotif files')
         #copy the geotiffs produced also 
         tif_files = glob.glob(os.path.join(i,'S1*.tif'))
@@ -143,38 +163,32 @@ for i in dates:
             for t in tif_files:
                 shutil.copy2(t,msbas_directory)
         else: print('S1*.tif files do not exist')    
-         
-        print('Creating directory for large files to be removed')
-        # this section is to remove the large uncessary files
-        # make a directory in each directory for files to be removed 
-        remove_directory_name = os.path.join(i,'{}_remove'.format(dir_only))
-        os.mkdir(remove_directory_name)
         
-        print('Moving geom_master, fine_offsets, fine_coreg and .SAFE files to dir')
-        #paths to directories and files to put in remove directory 
-        geom = os.path.join(i, 'geom_master')
-        shutil.move(geom,remove_directory_name)
-        fine_offset = os.path.join(i, 'fine_offsets')
-        shutil.move(fine_offset,remove_directory_name)
-        fine_coreg = os.path.join(i, 'fine_coreg')
-        shutil.move(fine_coreg,remove_directory_name)
-        
-        safe_files = glob.glob(os.path.join(i,'*.SAFE'))
-        
-        for s in safe_files:
+            
+        ## ## JH MOVED AUG 17 ## ##
+        if remove_flag == 0:
+            print('No Files Moved or Deleted'.format(remove_directory_name))
+        elif remove_flag == 1:
+            print('Moving and deleting Large Files')
+            remove_directory_name = os.path.join(i,'{}_remove'.format(dir_only))
+            os.mkdir(remove_directory_name)
+            print('Moving geom_master, fine_offsets, fine_coreg and .SAFE files to dir')
+            geom = os.path.join(i, 'geom_master')
+            shutil.move(geom,remove_directory_name)
+            fine_offset = os.path.join(i, 'fine_offsets')
+            shutil.move(fine_offset,remove_directory_name)
+            fine_coreg = os.path.join(i, 'fine_coreg')
+            shutil.move(fine_coreg,remove_directory_name)
+            
+            safe_files = glob.glob(os.path.join(i,'*.SAFE'))
+            for s in safe_files:
             shutil.move(s,remove_directory_name)
             
-        
-        if remove_flag == 0:
-            print('Large files moved to {} but not deleted'.format(remove_directory_name))
-        elif remove_flag == 1:
-            print('Removing Large Files')
             shutil.rmtree(remove_directory_name)
         else:
             print('remove_flag must be 1 or 0')
-        # actually remove files - commented out for now
-        #print('Removing large files')    
-        #shutil.rmtree(remove_directory_name)
+      
+            
     else:
         print('ISCE did not run correctly')
             
