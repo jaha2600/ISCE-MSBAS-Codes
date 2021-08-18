@@ -1,15 +1,22 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Aug 18 15:51:32 2021
 
-import os
+@author: jasmine
+"""
+
+import os, sys
 import glob
 import re
 import numpy as np
 from datetime import datetime
 
 
-##################### JH ADD THIS MODULE AUG 11 2021 ###############################
+##################### JH ADD THESE MODULES AUG 2021 ###############################
 from osgeo import gdal, ogr
 import argparse
+import pandas as pd
 ################################################################################################
 # Step 0: run ISCE up to 'computeBaselines' step. Container does this.
 # Step 1: Edit dir_in below to point to directory of interferogram directories. Run this script.
@@ -18,21 +25,44 @@ import argparse
 def getparser():
     # Parser to submit inputs for scripts. See Jul 27 Email from Jasmine
     parser = argparse.ArgumentParser(description="Create inputs for MSBAS")
-    parser.add_argument('current_dir', type=str, help='dir with 20* directories in (can just used $PWD if in correct place')
-    parser.add_argument('shapefile_area', type=str, help='path and name of file to extract extents for clipping files, must be in EPSG:4326')
+    parser.add_argument('input_file', type=str, help='link to the input file with variables in')
+    
     #parser.add_argument('rm_flag', type=int, help='Flag to assign removal of large unecessary files, has to be 0 or 1. 0 files are kept, 1 files are deleted')
     return parser
 
 # i think sticking with full paths on summit is safer as i have had issues with relative pathing and chdir
 parser = getparser()
 args = parser.parse_args()
-currentdir= args.current_dir
-extentfile=args.shapefile_area
+inputs= args.input_file
+#extentfile=args.shapefile_area
 #os.chdir(currentdir)
 
-dir_in = currentdir
 
+#read in variables from input text file 
 
+df=pd.read_csv(inputs,names=['var_names','var_vals'], sep='=')
+var_vals = df['var_vals']
+
+dir_in=str(var_vals[0])
+extent_val = str(var_vals[1])
+
+# check directory is valid 
+if os.path.isdir(dir_in):
+    print('Working Dir exists - continuing')
+else:
+    sys.exit('Input Directory Does Not Exist')
+    
+# check if extents input is a shapefile or just a string 
+if extent_val.endswith(".shp"):
+    inDriver = ogr.GetDriverByName("ESRI Shapefile")
+    inDataSource = inDriver.Open(extent_val, 0)
+    inLayer = inDataSource.GetLayer()
+    extents = inLayer.GetExtent()
+    extent = str(extents[0]) + ', ' + str(extents[3]) + ', ' + str(extents[1]) + ', ' + str(extents[2]) 
+else:
+    extent = extent_val
+    
+    
 #confirm folder exists to save to. 
 trackdir = os.path.join(dir_in, "asc")
 if not os.path.isdir(trackdir):
@@ -45,43 +75,24 @@ else:
 
 os.chdir(dir_in)
 dates = glob.glob('20*')
+dates.sort()
 size =len(dates)
 print(size, "folders found")
 
 saveList = []
 
-## check this bit with Joel about odd extents ##
 
-# read in a shapefile in EPSG:4326 to get the extents of the area you want 
-
-if extentfile.endswith(".shp"):
-    inDriver = ogr.GetDriverByName("ESRI Shapefile")
-    inDataSource = inDriver.Open(extentfile, 0)
-    inLayer = inDataSource.GetLayer()
-    extents = inLayer.GetExtent()
-    extent = str(extents[0]) + ', ' + str(extents[3]) + ', ' + str(extents[1]) + ', ' + str(extents[2]) 
-elif extentfile.endswith(".tif"):
-    #read in the extent of one of geotiffs ?
-    extentinfo = gdal.Info(extentfile, format='json', stats='True')
-    extent_coords = extentinfo['wgs84Extent']['coordinates'][0]
-    extent_1 = extentinfo['wgs84Extent']['coordinates'][0][1][0]
-    extent_2 = extentinfo['wgs84Extent']['coordinates'][0][3][1]
-    extent_3 = extentinfo['wgs84Extent']['coordinates'][0][3][0]
-    extent_4 = extentinfo['wgs84Extent']['coordinates'][0][1][1]
-    extent = str(extent_1) + ', ' + str(extent_2) + ', ' + str(extent_3) + ', ' + str(extent_4)
-
-else:
-    print('File to get extents should be a geotif (i.e. *COR.tif) or a shapefile.')
 
 for i in range(size):
     print(' ## Working on {}/{} ##'.format((i+1),size))
-    phaseFileIn = os.path.join(dir_in,dates[i], 'filt_topophase.unw_m.geo')
+    merged_dir = os.path.join(dir_in,dates[i],'merged/')
+    phaseFileIn = os.path.join(merged_dir, 'filt_topophase.unw_m.geo')
     
     convertdir = os.path.join(dir_in,dates[i])
     
     if os.path.isdir(convertdir):
         #    if os.path.isdir(convertdir):
-        os.chdir(convertdir)
+        os.chdir(merged_dir)
        
         #Command from scotty cheat sheet with -1 added to make negative values match surface moving AWAY from the satellite. Call the .vrt extension for use with gdal
         print('Clipping filt_topophase')
@@ -92,7 +103,7 @@ for i in range(size):
         phaseFileOut = os.path.join(dir_in,trackdir,dates[i] + ".filt_topophase.unw_m.geo.clip.tif")
        
        
-        # get the extents from qgis and the -COR or -AMP or -UNW geotiffs and paste below.
+        # clip filt file. 
        
         phase_gdal_command = 'gdal_translate -projwin '+str(extent)+' -of GTiff '+str(phaseFileIn)+' '+str(phaseFileOut)
        
@@ -133,9 +144,6 @@ for i in range(size):
         
     else:
         print(convertdir + ' does not exist')
-        
-        
-
 
 
 print(saveList)
@@ -149,12 +157,16 @@ np.savetxt(savepath, saveList, fmt="%s", delimiter=' ', newline='\n')
 ################################## JH ADD AUG 11 2021 - code to create a header file and clip/extract values from LOS file #####################################
 
 # clip an los file from an example subdirectory to extract azumith and incidence angle
+# we have one los file which is in the main msbas directory msbas/los* in same as 20XX_20XX dirs.
+
 print('Clipping an los.rdr.geo.vrt file')
-los_file_in = os.path.join(dir_in,dates[0],'los.rdr.geo.vrt')
-los_file_out = os.path.join(dir_in,trackdir,dates[0] + '.los.rdr.geo.tif.clip')
-clip_los_command = 'gdal_translate -projwin -55.54984305896815 68.0001446011998 -48.14986218680518 65.16982519688996 -of GTiff -q '+str(los_file_in)+' '+str(los_file_out)
+los_file_in = os.path.join(dir_in,'los.rdr.geo.vrt')
+los_file_out = os.path.join(dir_in,'los.rdr.geo.tif.clip')
+clip_los_command = 'gdal_translate -projwin '+str(extent)+' -of GTiff -q '+str(los_file_in)+' '+str(los_file_out)
 
 os.system(clip_los_command)
+
+
 
 # read gdal info in python instead of commandline 
 print('Extracting incidence and azumith')
@@ -199,7 +211,7 @@ phase_file_info = gdal.Info(phaseFileOut_e, format='json')
 file_size = phase_file_info['size']
 # create textfile 
 # this file has blank placeholders for variables like format, file size etc. values can be added to this script later if needed
-header_combined = 'FORMAT=2, 0' + '\n' +'FILE_SIZE=' + str(file_size[0]) + ', ' + str(file_size[1]) + '\n' + 'WINDOW_SIZE' + '\n' + 'C_FLAG=' + '\n' + 'R_FLAG=' + '\n' + 'I_FLAG=' + '\n' + 'SET=' + str(start_time) +', ' + str(azimuth) + ', ' + str(incidence_angle) + ', saveList.txt'
+header_combined = 'FORMAT=2, 0' + '\n' +'FILE_SIZE=' + str(file_size[0]) + ', ' + str(file_size[1]) + '\n' + 'C_FLAG=' + '\n' + 'R_FLAG=' + '\n' + 'I_FLAG=' + '\n' + 'SET=' + str(start_time) +', ' + str(azimuth) + ', ' + str(incidence_angle) + ', saveList.txt'
 header_savepath = os.path.join(dir_in, 'header.txt')
 
 print('Creating header.txt file')
