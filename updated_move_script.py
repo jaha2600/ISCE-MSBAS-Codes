@@ -44,16 +44,6 @@ if os.path.isdir(currentdir) == True:
 else:
     sys.exit('Input Directory Does Not Exist')
 
-# # check the remove flag is correct value
-# if remove_flag == 0:
-#         print('No File Removal')
-# elif remove_flag == 1:
-#         print('Large unecessary files will be removed')
-# else:
-#         #print('rm_flag must be either 0 or 1')
-#         sys.exit('Error - rm_flag must be either 0 or 1')
-
-
 
 # list the directories with the pathnames
 dates = glob.glob(os.path.join(currentdir,'20*'))
@@ -84,6 +74,7 @@ if os.path.isfile(os.path.join(savepath,'los.rdr.geo.vrt')):
 else: 
     for d in dates: 
         # print path of los file if it would exist
+        print('Getting Los File')
         los_file_path = os.path.join(d,'merged/')
         orig_los_file = os.path.join(los_file_path,'los.rdr.geo.vrt')
         
@@ -202,7 +193,7 @@ for i in dates:
       
             
     else:
-        print('ISCE did not run correctly')
+        print('ISCE did not run correctly on {}'.format(i)
             
         
         
