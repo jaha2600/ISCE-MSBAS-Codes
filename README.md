@@ -5,7 +5,7 @@ Codes are run in python command line and require the following modules to be ins
 `os`, `sys`, `glob`, `shutil`, `argparse`, `gdal`, `ogr`, `pandas`, `numpy`
 
 ## Usage
-`updated_move_script.py`
+### `updated_move_script.py`
 
 Designed to be used on summit on directory structure produced from running ISCE container.
 
@@ -21,7 +21,7 @@ This can then be downloaded via Globus.
 --rm_flag is optional, if used it will find large directories such as fine_offsets, master etc. and delete them to free up space.
 
  
-`PrepMsbasIfgs_jh.py` 
+### `PrepMsbasIfgs_jh.py` 
 
 Used on MSBAS_FILES directory after download to local computer.
 
