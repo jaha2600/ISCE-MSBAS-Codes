@@ -22,7 +22,7 @@ def getparser():
     parser = argparse.ArgumentParser(description="Move ISCE outputs for MSBAS")
     parser.add_argument('current_dir', type=str, help='home directory holding date pair folders. i.e./net/tiampostorage2/volume2/JoelShare2/KristyProcessing/Colorado/Calwood/10m')
     # if --rm_flag is added then save rm_flag as 'True' otherwise save as false
-    parser.add_argument('--rm_flag', type=int, action='store_true',help='Flag to assign removal of large unecessary files, has to be 0 or 1. 0 files are kept, 1 files are deleted')
+    parser.add_argument('--rm_flag', action='store_true',help='Flag to assign removal of large unecessary files, has to be 0 or 1. 0 files are kept, 1 files are deleted')
     return parser
 
 # i think sticking with full paths on summit is safer as i have had issues with relative pathing and chdir
@@ -192,9 +192,9 @@ for i in dates:
             
             safe_files = glob.glob(os.path.join(i,'*.SAFE'))
             for s in safe_files:
-            shutil.move(s,remove_directory_name)
+                shutil.move(s,remove_directory_name)
             
-            shutil.rmtree(remove_directory_name)
+                shutil.rmtree(remove_directory_name)
         else:
             print('remove_flag must be 1 or 0')
       
