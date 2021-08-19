@@ -193,19 +193,5 @@ for i in dates:
       
             
     else:
-        print('ISCE did not run correctly on {}'.format(i)
+        print('ISCE did not run correctly on {}'.format(i))
             
-        
-        
-        
-            
-            
-            
-            
-    
-    
-
-
-
-
-
