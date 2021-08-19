@@ -77,21 +77,23 @@ if os.path.isdir(savepath):
 else: 
 	os.mkdir(savepath) 
 	print("making Transfer folder")
-    
-## ## JH CHAGED AUG 17 ## ##
+	
 print('Getting one los file')
-    # do the same for the los.rdr.geo files
-los_file_path = os.path.join(dates[0],'merged/')
-los_files = glob.glob(os.path.join(los_file_path,'los.rdr.geo*'))
-
-# somehow get it to extract a los file from the next directory if first one doesnt have los file
-if len(los_files) != 0:
-    for l in los_files:
-        shutil.copy2(l, savepath)
+if os.path.isfile(os.path.join(savepath,'los.rdr.geo.vrt')):
+    print('Los File Already Moved - Moving On')
 else: 
-    sys.exit('LOS File Does not exist in first directory looked in?')
+    for d in dates: 
+        # print path of los file if it would exist
+        los_file_path = os.path.join(d,'merged/')
+        orig_los_file = os.path.join(los_file_path,'los.rdr.geo.vrt')
+        
+        # if file exists in that directory copy it
+        if os.path.isfile(orig_los_file):
+            los_files = glob.glob(os.path.join(los_file_path,'los.rdr.geo*'))
+            for l in los_files:
+                shutil.copy2(l,savepath)
+            break
 
-## ##     ## ## 
  
 for i in dates:
    
@@ -120,7 +122,7 @@ for i in dates:
         if os.path.isdir(msbas_merge_dir):
             print('MSBAS/merged dir already exists')
         else:
-            os.mksir(msbas_merge_dir)
+            os.mkdir(msbas_merge_dir)
         ## ##      ## ## 
             
         print('Creating and copying original filelist')
@@ -177,7 +179,7 @@ for i in dates:
             
         ## ## JH MOVED AUG 17 ## ##
         if remove_flag == 0:
-            print('No Files Moved or Deleted'.format(remove_directory_name))
+            print('No Files Moved or Deleted')
         elif remove_flag == 1:
             print('Moving and deleting Large Files')
             remove_directory_name = os.path.join(i,'{}_remove'.format(dir_only))
