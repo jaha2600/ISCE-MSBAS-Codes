@@ -16,7 +16,7 @@ Creates directory `MSBAS_FILES` that contains the files needed for MSBAS for eac
 This can then be downloaded via Globus.
 
 
-`updated_move_script.py` working_directory --rm_flag 
+`updated_move_script.py` working_directory [--rm_flag] 
 
 --rm_flag is optional, if used it will find large directories such as fine_offsets, master etc. and delete them to free up space.
 
