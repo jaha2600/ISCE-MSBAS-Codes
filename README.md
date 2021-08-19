@@ -37,3 +37,15 @@ Example `inputs.txt` file included in repo. Here you assign the working director
 
 Extents variable can be the values of extent OR a shapefile in EPSG:4326 matching desired area.
 
+### misc directory scripts
+Other useful things that are still in development:
+
+`get_insar_pairs_all_combo.py`
+
+This is a prelim script that reads in a list of insar files from ASF, and calculates all possible pairs within a certain amount of dates (that you set as a variable in cmd line).
+
+Output format is not yet compatible with the jobscript used to run isce, as you would want your ref and sec to be lines 1 & 2, then lines 3 & 4 etc.
+
+Usage: `get_insar_pairs_all_combo.py` asf_filelist.txt 10
+
+
