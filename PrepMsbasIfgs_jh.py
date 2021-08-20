@@ -166,7 +166,11 @@ clip_los_command = 'gdal_translate -projwin '+str(extent)+' -of GTiff -q '+str(l
 
 os.system(clip_los_command)
 
-
+print('Conveting an example filt_topo.clip file to view pixel coordinates')
+examp_filt = os.path.join(dir_in,trackdir,dates[0] + ".filt_topophase.unw_m.geo.clip.tif")
+examp_filt_out = os.path.join(dir_in,dates[0] + ".filt_topophase.unw_m.geo.clip.tif")
+pixel_command = 'gdal_translate -ot Byte -scale '+str(examp_filt)+' '+str(examp_filt_out)
+os.system(pixel_command)
 
 # read gdal info in python instead of commandline 
 print('Extracting incidence and azumith')
