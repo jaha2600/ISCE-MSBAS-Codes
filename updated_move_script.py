@@ -119,7 +119,7 @@ for i in dates:
         print('Creating and copying original filelist')
         #save the files in the original directory for a list
         dir_files = os.listdir(i)
-        ls_filename = os.path.join(i,'{}_orig_files'.format(dir_only))
+        ls_filename = os.path.join(i,'{}_orig_filelist'.format(dir_only))
         with open (ls_filename, 'wt') as output:
             for item in dir_files:
                 output.write("%s\n" % item)
@@ -128,7 +128,7 @@ for i in dates:
                 
         
         #move listfile to msbas directory
-        lsinpath = os.path.join(i,'{}_orig_files'.format(dir_only))
+        lsinpath = os.path.join(i,'{}_orig_filelist'.format(dir_only))
         lsoutpath = msbas_directory
         shutil.copy2(lsinpath,lsoutpath)
         
