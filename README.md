@@ -1,8 +1,7 @@
-TESET
 # Codes to Create Inputs and run MSBAS from ISCE Outputs.
 
 ## Usage
-### `updated_move_script.py`
+### `msbas_move_script.py`
 
 Designed to be used on summit on directory structure produced from running ISCE container.
 
@@ -13,12 +12,12 @@ Creates directory `MSBAS_FILES` that contains the files needed for MSBAS for eac
 This can then be downloaded via Globus.
 
 
-`updated_move_script.py` working_directory [--rm_flag] 
+`msbas_move_script.py` working_directory [--rm_flag] 
 
 --rm_flag is optional, if used it will find large directories such as fine_offsets, master etc. and delete them to free up space.
 
  
-### `PrepMsbasIfgs_jh.py` 
+### `make_msbas_inputs.py` 
 
 Used on MSBAS_FILES directory after download to local computer.
 
@@ -27,7 +26,7 @@ Copy this script to MSBAS_FILES directory, create input file and run.
 Creates input files needed for MSBAS algorithm. necessary file structure follows on from updated_move_script.py script.
 
 
-`PrepMsbasIfgs_jh.py` input_file.txt
+`make_msbas_inputs.py` input_file.txt
 
 
 Example `inputs.txt` file included in repo. Here you assign the working directory path, and the extents you wish to run MSBAS on.
@@ -45,4 +44,7 @@ Output format is not yet compatible with the jobscript used to run isce, as you 
 
 Usage: `get_insar_pairs_all_combo.py` asf_filelist.txt 10
 
+`filt_topo_stats.py`
+
+Get average coherance and coverage of filt topo image. 
 
