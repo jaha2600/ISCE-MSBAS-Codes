@@ -1,8 +1,4 @@
-# Codes to Extract MSBAS inputs from ISCE files
-
-## Dependencies 
-Codes are run in python command line and require the following modules to be installed: 
-`os`, `sys`, `glob`, `shutil`, `argparse`, `gdal`, `ogr`, `pandas`, `numpy`
+# Codes to Create Inputs and run MSBAS from ISCE Outputs.
 
 ## Usage
 ### `updated_move_script.py`
