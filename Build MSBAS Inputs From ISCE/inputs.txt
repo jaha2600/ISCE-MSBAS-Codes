@@ -1,0 +1,2 @@
+WORKING_DIR=/data/jasmine/msbas/
+EXTENTS=-50, -40, 30, 20
