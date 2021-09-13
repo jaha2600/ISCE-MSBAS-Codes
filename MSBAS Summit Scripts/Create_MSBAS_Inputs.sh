@@ -18,7 +18,12 @@ conda activate /curc/sw/anaconda3/2019.03/envs/idp
 # your input file will be the first commandline variable submitted with the script 
 # I would include the full path to input file to be safe. 
 
-INPUT_FILE=$1
+if [! -z $1] ; then
+
+   INPUT_FILE=$1
+else
+  echo 'Script requies an input texfile as command line variable'
+  exit
 
 # $2 will be optional and will refer to the --r_vals flag in the python script 
 # we need to first check if $2 is input at all, and then check that it is --rm_flag
@@ -30,6 +35,7 @@ if [ ! -z $2] ; then
       python /projects/jaha2600/MSBAS/make_msbas_inputs_r_vals.py $INPUT_FILE $2
    else
      echo 'Second command line input is optional. If inlcuded it must equal --rm_flag'
+     exit
    fi
 # if there is not a second input then just run script with input texfile:
 else
