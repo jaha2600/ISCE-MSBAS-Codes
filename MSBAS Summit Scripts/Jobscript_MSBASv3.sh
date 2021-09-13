@@ -27,5 +27,5 @@ module load singularity/3.6.4
 HEADER_FILE=$1
 
 #run msbas program with header file as argument 
-singularity exec /projects/jaha2600/containers/msbasv3.sif msbasv3 $HEADER_FILE
+singularity exec --bind /scratch/summit /projects/jaha2600/containers/msbasv3.sif msbasv3 $HEADER_FILE
 
