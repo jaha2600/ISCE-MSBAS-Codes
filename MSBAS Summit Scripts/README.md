@@ -11,7 +11,7 @@ Step 1: Log into summit 'scompile' node
 Step 2: Run installation script:
 
 ```
-bash ./MSBAS_Container 
+bash ./MSBAS_Container_Install.sh 
 ```
 
 The continer will be installed in `/projects/$USER/containers` and you should see the file msbasv3_latest.sif in that directory.
