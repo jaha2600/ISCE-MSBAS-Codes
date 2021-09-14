@@ -11,9 +11,7 @@
 #SBATCH --nodes=1            # Number of Nodes
 #SBATCH --ntasks=2           # Number of tasks per job
 
-#SBATCH --job-name=aptinsar        # Job submission name
-#SBATCH --output=aptinsar.%A_%a.out   # Output file name with Job ID
-
+#SBATCH --job-name=msbasv3        # Job submission name
 #SBATCH --mail-type=END            # Email user when job finishes
 #SBATCH --mail-user=jaha2600@colorado.edu # Email address of user
 
