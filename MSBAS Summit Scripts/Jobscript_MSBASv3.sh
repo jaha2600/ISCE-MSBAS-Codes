@@ -24,8 +24,8 @@ module purge
 module load singularity/3.6.4
 
 #make path to header file the first commandline argument 
-HEADER_FILE=$1
+HEADER_FILE=/path/to/header.txt
 
 #run msbas program with header file as argument 
-singularity exec --bind /scratch/summit /projects/jaha2600/containers/msbasv3.sif msbasv3 $HEADER_FILE
+singularity exec --bind /scratch/summit /projects/$USER/containers/msbasv3.sif msbasv3 $HEADER_FILE
 
