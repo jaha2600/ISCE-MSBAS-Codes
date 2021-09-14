@@ -1,14 +1,14 @@
-#SBATCH --nodes=1
+#SBATCH --nodes=
 ## select one core to do the job
-#SBATCH --ntasks=1
+#SBATCH --ntasks=
 ## set shas partition
-#SBATCH --partition=shas
+#SBATCH --partition=
 ## set condo for job? 
-#SBATCH  --account ucb-summit-mjw
+#SBATCH  --account 
 ## set walltime
-#SBATCH --time=2:00:00
+#SBATCH --time=
 ## set email to send at end of job 
-#SBATCH --mail-user=jaha2600@colorado.edu
+#SBATCH --mail-user=
 #SBATCH --mail-type=END
 
 module purge
@@ -32,14 +32,14 @@ else
 if [[ ! -z $2]] ; then
    # check that the second string is equal to --r_vals
    if [[ $2 = "--r_vals" ]] ; then
-      python /projects/jaha2600/MSBAS/make_msbas_inputs_r_vals.py $INPUT_FILE $2
+      python /projects/$USER/MSBAS/make_msbas_inputs_r_vals.py $INPUT_FILE $2
    else
      echo 'Second command line input is optional. If inlcuded it must equal --rm_flag'
      exit
    fi
 # if there is not a second input then just run script with input texfile:
 else
-  python /projects/jaha2600/MSBAS/make_msbas_inputs_r_vals.py $INPUT_FILE
+  python /projects/$USER/MSBAS/make_msbas_inputs_r_vals.py $INPUT_FILE
 
 
 fi
