@@ -28,7 +28,7 @@ sbatch Jobscript_MSBASv3.sh
 ```
 You need to change the path to your header.txt file and change the sbatch commands at the top to your own allocation, email etc.
 
-The number of nodes / ntasks varies depending on your input data size, along with what the suitable wall time is. 
+The number of nodes / ntasks varies depending on your input data size. MSBAS is a high memory program, as such we reccomend running on a high memory node. For the RMACC Summit supercomputer this would be an 'smem' partition. It does work on a standard 'shas' parition but requires a high quantitity of nodes and cores.  
 
 
 
