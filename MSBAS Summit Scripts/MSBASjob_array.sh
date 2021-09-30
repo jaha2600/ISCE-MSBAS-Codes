@@ -11,6 +11,8 @@
 #SBATCH --ntasks=24                 # Number of tasks per job. Will vary depending on size and num of Ifgs.
 #SBATCH --job-name=MSarr
 #SBATCH --array=1-5
+#SBATCH --mail-type=END            # Email user when job finishes
+#SBATCH --mail-user=jojo8550@colorado.edu # Email address of user
 
 
 #purge all existing modules
