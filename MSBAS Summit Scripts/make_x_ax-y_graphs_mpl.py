@@ -6,9 +6,7 @@ Created on Mon Sep 13 14:56:08 2021
 @authors: jasmine hansen, ethan pierce & joel johnson, 2021
 """
 
-## This code is used to find the optimum r_val to input into your MSBAS header file by looking at an array
-## of previous MSBAS runs and finding the critical value
-## To be used after running an array of MSBAS Files with differeing R Vals
+## simplified graph code that plots x and ax-y and labels by r-val to ref which msbas runs are good
 
 ## inputs are a textfile containing the path and name of all of your log files
 ## i.e./path/to/header/header.txt
@@ -23,7 +21,6 @@ import os, sys
 import pandas as pd 
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import MinMaxScaler
 #import seaborn as sns
 
 # parser for command line inputs 
@@ -39,8 +36,8 @@ inputs= args.input_file
 outpath = args.out_dir
 
 #test
-inputs = '/data/GREENLAND/INSAR/MSBAS/test_log_data/log_list.txt'
-outpath = '/data/GREENLAND/INSAR/MSBAS/test_log_data/'
+#inputs = '/data/GREENLAND/INSAR/MSBAS/test_log_data/log_list.txt'
+#outpath = '/data/GREENLAND/INSAR/MSBAS/test_log_data/'
 
 # open input textfile and read 
 orig_inputs = open(inputs)
@@ -98,34 +95,6 @@ fit = np.polynomial.Polynomial.fit(df['ax-y'], df['x'], 2, domain = [df['ax-y'].
 n = 100
 points = fit.linspace(n)
 
-#sns.set_theme(style = 'ticks')
-# fig, ax = plt.subplots(figsize = (6, 6))
-
-# ax.plot(points[0], points[1], color = 'k', alpha = 0.5)
-# sns.scatterplot(data = df, x = 'ax-y', y = 'x', hue = 'r', ax = ax, palette = 'flare')
-# ax.set_yscale('log')
-# ax.set_xscale('log')
-# plt.legend()
-# plt.show()
-
-# Take the derivative of our fitted polynomial
-derivative = fit.deriv()
-
-# Interpolate the derivative to points
-dy_points = derivative.linspace(n)
-
-# Find the index where the derivative is greatest
-index = np.argmin(np.abs(np.abs(dy_points[1]).max() - np.abs(dy_points[1])))
-
-# Translate the index into ax-y space
-axy_crit = dy_points[0][index]
-
-
-# Find the x, ax-y, and r-values where the derivative is steepest
-r_index = np.argmin(np.abs(axy_crit - df['ax-y']))
-r_crit = df['r'][r_index]
-x_crit = df['x'][r_index]
-
 
 # Plot everything together
 #sns.set_theme(style = 'ticks')
@@ -157,21 +126,6 @@ plt.show()
 #save figure
 fig_outname = os.path.join(outpath, 'crit_rval_x_ax-y_graph.png') 
 plt.savefig(fig_outname, dpi=300)
-
-### commented oout by JH as crit not working ###
-# axy_crit_round = np.round(axy_crit, 3)
-# x_crit_round = np.round(x_crit, 3)
-# r_crit_round = np.round(r_crit, 3)
-
-# crit_outdata = 'Crit r_val: ' + str(r_crit_round) + '\n' + 'Crit x-val: ' + str(x_crit_round) + '\n' + 'Crit ax-y val: ' + str(axy_crit_round) 
-# crit_outpath = os.path.join(outpath, 'critical_r_values.txt')
-
-# print('Saving out data')
-# # save textfile 
-# text_file = open(crit_outpath, "w")
-# n = text_file.write(crit_outdata)
-# text_file.close()
-
 
 
 
