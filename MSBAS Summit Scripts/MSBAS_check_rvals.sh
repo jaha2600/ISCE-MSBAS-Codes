@@ -28,7 +28,7 @@ ls $WORKING_DIR/*/MSBAS_LOG.txt > $WORKING_DIR/log_list.txt
 input_file=$WORKING_DIR/log_list.txt
 
 # run python script, outputs appear in the location of $WORKING_DIR
-python make_x_ax-y_graphs.py $input_file $WORKING_DIR
+python make_x_ax-y_graphs_mpl.py $input_file $WORKING_DIR
 
 
 
