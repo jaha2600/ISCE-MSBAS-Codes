@@ -38,5 +38,4 @@ HEADER_FILE=header_$RVAL.txt
 sed 's/RVAL/'$RVAL'/g' $HEADER_TEMPLATE > ${HEADER_FILE}
 
 #run msbas program with header file as argument 
-singularity exec --bind /scratch/summit /projects/$USER/containers/msbasv3.sif msbasv3 ${HEAD
-ER_FILE}
+singularity exec --bind /scratch/summit /projects/$USER/containers/msbasv3.sif msbasv3 ${HEADER_FILE}
